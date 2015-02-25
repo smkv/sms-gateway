@@ -1,4 +1,4 @@
-package ee.smkv.sms;
+package ee.smkv.sms.model;
 
 public class SmsMessage {
     private String recipient;

@@ -1,6 +1,6 @@
 package ee.smkv.sms.resources;
 
-import ee.smkv.sms.SmsMessage;
+import ee.smkv.sms.model.SmsMessage;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
