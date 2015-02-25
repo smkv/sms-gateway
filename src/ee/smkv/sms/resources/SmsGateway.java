@@ -1,6 +1,7 @@
 package ee.smkv.sms.resources;
 
 import ee.smkv.sms.SmsMessage;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,7 @@ public class SmsGateway {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public boolean post(SmsMessage smsMessage){
+    public boolean post(@RequestBody SmsMessage smsMessage){
         System.out.println(smsMessage);
         return false;
     }
