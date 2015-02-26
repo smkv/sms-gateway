@@ -26,7 +26,7 @@ public class SmsService {
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Value("#{'${sms.whitelist}'.split('\\s*,\\s*')}")
-    private Set<String> smsWhiteList = Collections.emptySet();
+    protected Set<String> smsWhiteList = Collections.emptySet();
 
 
     @PostConstruct
@@ -54,12 +54,12 @@ public class SmsService {
         queue.offer(smsMessage);
     }
 
-    private void validate(SmsMessage smsMessage) {
+    protected void validate(SmsMessage smsMessage) {
         validateRecipient(smsMessage);
         validateMessage(smsMessage);
     }
 
-    private void validateRecipient(SmsMessage smsMessage) {
+    protected void validateRecipient(SmsMessage smsMessage) {
         if (StringUtils.isEmpty(smsMessage.getRecipient())) {
             throw new IllegalArgumentException(String.format("The recipient of SMS is empty"));
         }
@@ -68,7 +68,7 @@ public class SmsService {
         }
     }
 
-    private void validateMessage(SmsMessage smsMessage) {
+    protected void validateMessage(SmsMessage smsMessage) {
         if (StringUtils.isEmpty(smsMessage.getText())) {
             throw new IllegalArgumentException(String.format("The message of SMS is empty"));
         }
