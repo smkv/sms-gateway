@@ -24,7 +24,7 @@ public class SmsService {
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private Set<String> allowedRecipients = new LinkedHashSet<String>(Arrays.asList(
-      "+3725050262"
+      "+3725432101"
     ));
 
 
