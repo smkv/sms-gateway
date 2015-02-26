@@ -18,13 +18,8 @@ public class SmsGateway {
     @Autowired
     SmsService smsService;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public List<SmsMessage> get(){
-        return Arrays.asList();
-    }
-
     @RequestMapping(method = RequestMethod.POST)
-    public void post(@RequestBody SmsMessage smsMessage){
+    public void post(@RequestBody SmsMessage smsMessage) {
         smsService.send(smsMessage);
     }
 
