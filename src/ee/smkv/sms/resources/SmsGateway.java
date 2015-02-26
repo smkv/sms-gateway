@@ -1,6 +1,8 @@
 package ee.smkv.sms.resources;
 
+import ee.smkv.sms.SmsService;
 import ee.smkv.sms.model.SmsMessage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,15 +15,17 @@ import java.util.List;
 @RequestMapping("/sms")
 public class SmsGateway {
 
+    @Autowired
+    SmsService smsService;
+
     @RequestMapping(method = RequestMethod.GET)
     public List<SmsMessage> get(){
         return Arrays.asList();
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public boolean post(@RequestBody SmsMessage smsMessage){
-        System.out.println(smsMessage);
-        return false;
+    public void post(@RequestBody SmsMessage smsMessage){
+        smsService.send(smsMessage);
     }
 
 }
