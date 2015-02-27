@@ -5,9 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.LinkedHashSet;
-
-import static org.junit.Assert.*;
+import java.util.ArrayList;
 
 public class SmsServiceTest {
     
@@ -16,7 +14,7 @@ public class SmsServiceTest {
     @Before
     public void setUp() throws Exception {
         smsService = new SmsService();
-        smsService.smsWhiteList = new LinkedHashSet<>();
+        smsService.smsWhiteList = new ArrayList<>();
         smsService.smsWhiteList.add("+372500000");
     }
 
