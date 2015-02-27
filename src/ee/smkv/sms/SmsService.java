@@ -25,8 +25,11 @@ public class SmsService {
     private LinkedBlockingQueue<SmsMessage> queue = new LinkedBlockingQueue<SmsMessage>();
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    @Value("#{'${sms.whitelist}'.split('\\s*,\\s*')}")
+    @Value("#{'${sms.whiteList}'.split('\\s*,\\s*')}")
     protected Set<String> smsWhiteList = Collections.emptySet();
+    
+    @Value("#{'${sms.blackList}'.split('\\s*,\\s*')}")
+    protected Set<String> smsBlackList = Collections.emptySet();
 
 
     @PostConstruct
@@ -60,11 +63,14 @@ public class SmsService {
     }
 
     protected void validateRecipient(SmsMessage smsMessage) {
-        if (StringUtils.isEmpty(smsMessage.getRecipient())) {
+        if ( StringUtils.isEmpty(smsMessage.getRecipient())) {
             throw new IllegalArgumentException(String.format("The recipient of SMS is empty"));
         }
-        if (!smsWhiteList.contains(smsMessage.getRecipient())) {
-            throw new IllegalArgumentException(String.format("The recipient '%s' is not in allowed recipients list", smsMessage.getRecipient()));
+        if (smsBlackList.contains(smsMessage.getRecipient())) {
+            throw new IllegalArgumentException(String.format("The recipient '%s' is in black recipients list", smsMessage.getRecipient()));
+        }
+        if (!smsWhiteList.isEmpty() && !smsWhiteList.contains(smsMessage.getRecipient())) {
+            throw new IllegalArgumentException(String.format("The recipient '%s' is not in white recipients list", smsMessage.getRecipient()));
         }
     }
 
