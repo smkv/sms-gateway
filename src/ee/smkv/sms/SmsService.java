@@ -39,13 +39,18 @@ public class SmsService {
     void init() {
         LOG.info("Initialization of SMS Service...");
         LOG.info("SMS White list: " + smsWhiteList);
+        LOG.info("SMS Black list: " + smsBlackList);
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 try {
                     while (!Thread.interrupted()) {
                         SmsMessage smsMessage = queue.take();
-                        smsSenderFactory.getSmsSender().send(smsMessage);
+                        try {
+                            smsSenderFactory.getSmsSender().send(smsMessage);
+                        } catch (Exception e) {
+                            LOG.error(e.getMessage() ,e);
+                        }
                     }
                 } catch (InterruptedException ignore) {
                 }
