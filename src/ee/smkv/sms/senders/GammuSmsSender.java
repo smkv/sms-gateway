@@ -3,53 +3,67 @@ package ee.smkv.sms.senders;
 import ee.smkv.sms.model.SmsMessage;
 import ee.smkv.sms.utils.Maps;
 import org.apache.commons.exec.*;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 @Component("gammu")
 public class GammuSmsSender implements SmsSender {
 
     private final static Logger LOG = Logger.getLogger(GammuSmsSender.class);
+    public static final String GAMMU_COMMAND_TEMPLATE = "gammu sendsms TEXT ${phone_number} -text ${message_text}";
+    public static final String PHONE_NUMBER = "phone_number";
+    public static final String MESSAGE_TEXT = "message_text";
+    private final PumpStreamHandler executeOutputLogger = new PumpStreamHandler(new LogOutputStream(Level.INFO_INT) {
+        @Override
+        protected void processLine(String line, int logLevel) {
+            LOG.log(Level.toLevel(logLevel), line);
+        }
+    });
 
     @Override
     public void send(SmsMessage smsMessage) {
         try {
-
-
-            CommandLine command = CommandLine.parse("gammu sendsms TEXT ${phone_number} -text ${message_text}",
-                    Maps.<String, String>builder()
-                            .put("phone_number", smsMessage.getRecipient())
-                            .put("message_text", smsMessage.getText())
-                            .build()
-            );
-            LOG.info(command);
-
-            final ByteArrayOutputStream output = new ByteArrayOutputStream();
-            DefaultExecutor executor = new DefaultExecutor();
-            executor.setStreamHandler(new PumpStreamHandler(output));
-            executor.execute(command, new ExecuteResultHandler() {
-                @Override
-                public void onProcessComplete(int exitValue) {
-                    LOG.info(output.toString());
-                    if (exitValue != 0) {
-                        LOG.error("Execution exit code is: " + exitValue);
-                    } else {
-                        LOG.info("SMS sent");
-
-                    }
-                }
-
-                @Override
-                public void onProcessFailed(ExecuteException e) {
-                    LOG.error("Failed execute command: " + e.getMessage(), e);
-                }
-            });
-
-
+            sendSmsUsingGammuCommandLineTool(smsMessage);
         } catch (Exception e) {
-            LOG.error("Failed execute command: " + e.getMessage(), e);
+            LOG.error("Failed execute a command: " + e.getMessage(), e);
         }
+    }
+
+    private void sendSmsUsingGammuCommandLineTool(SmsMessage smsMessage) throws IOException, InterruptedException {
+        LOG.info("Sending SMS message...");
+        CommandLine command = makeCommand(smsMessage);
+        LOG.info(command);
+
+        DefaultExecuteResultHandler result = executeCommand(command);
+
+        ExecuteException exception = result.getException();
+        if (exception != null) {
+            LOG.error("Failure of sending SMS message:" + exception.getMessage(), exception);
+        }else if (result.getExitValue() == 0) {
+            LOG.info("SMS message sent");
+        }else {
+            LOG.error("SMS message sending failed, program returns exit code: " + result.getExitValue());
+        }
+    }
+
+    private DefaultExecuteResultHandler executeCommand(CommandLine command) throws IOException, InterruptedException {
+        DaemonExecutor executor = new DaemonExecutor();
+        executor.setStreamHandler(executeOutputLogger);
+        DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
+        executor.execute(command, resultHandler);
+        resultHandler.waitFor();
+        return resultHandler;
+    }
+
+    protected CommandLine makeCommand(SmsMessage smsMessage) {
+        return CommandLine.parse(GAMMU_COMMAND_TEMPLATE,
+                Maps.<String, String>builder()
+                        .put(PHONE_NUMBER, smsMessage.getRecipient())
+                        .put(MESSAGE_TEXT, smsMessage.getText())
+                        .build()
+        );
     }
 }
