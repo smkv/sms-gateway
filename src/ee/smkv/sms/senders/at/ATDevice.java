@@ -60,8 +60,6 @@ public class ATDevice {
                 LOG.info("Sending line: " + text);
                 serialPort.writeString(text);
                 serialPort.writeString("\u001A");
-                line = assembler.readStringLine();
-                LOG.info("Reading line: " + line);
             } else if (!StringUtils.isEmpty(line) && !FINAL_RESULT_CODE.contains(line)) {
                 if (responseBuilder.length() > 0) responseBuilder.append('\n');
                 responseBuilder.append(line);
