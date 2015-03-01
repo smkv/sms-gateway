@@ -6,6 +6,7 @@ import ee.smkv.sms.senders.at.ATDevice;
 import jssc.SerialPortException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 @Component("at")
-//@Lazy
+@Lazy
 public class JSSCATSmsSender implements SmsSender {
 
     private final static Logger LOG = Logger.getLogger(JSSCATSmsSender.class);

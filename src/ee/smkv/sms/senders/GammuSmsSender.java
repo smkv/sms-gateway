@@ -5,11 +5,13 @@ import ee.smkv.sms.utils.Maps;
 import org.apache.commons.exec.*;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Component("gammu")
+@Lazy
 public class GammuSmsSender implements SmsSender {
 
     private final static Logger LOG = Logger.getLogger(GammuSmsSender.class);
