@@ -14,10 +14,12 @@ public class ATDevice {
 
     private final SerialPort serialPort;
     private SerialPortAssembler assembler;
+    private final String pin;
 
-    public ATDevice(String serialPort) {
+    public ATDevice(String serialPort, String pin) {
         this.serialPort = new SerialPort(serialPort);
         this.assembler = new SerialPortAssembler(this.serialPort);
+        this.pin = pin;
     }
 
     public void open() throws SerialPortException {
@@ -32,8 +34,8 @@ public class ATDevice {
     }
 
     public String execute(ATCommand command) throws SerialPortException {
-        StringBuffer responseBuffer = new StringBuffer();
-        LOG.info("Sending  command: " + command.getCommand());
+        StringBuilder responseBuilder = new StringBuilder();
+        LOG.info("Sending line: " + command.getCommand());
         serialPort.writeString(command.getCommand());
         serialPort.writeString("\r");
 
@@ -41,20 +43,32 @@ public class ATDevice {
         do {
             line = assembler.readStringLine();
             LOG.info("Reading line: " + line);
+            if(CMEError.isCMEError(line)){
+                CMEError error = CMEError.parse(line);
+                if(error.isPinRequired()){
+                    ATCommand enterPinCommand = new ATCommand("AT+CPIN=" + pin);
+                    execute(enterPinCommand);
+                    if ("OK".equals(enterPinCommand.getStatus())) {
+                        return execute(command);
+                    }
+                }
+                throw error;
+
+            }
             if ("> ".equals(line)) {
                 String text = command.prompt(line);
-                LOG.info("Sending  text: " + text);
+                LOG.info("Sending line: " + text);
                 serialPort.writeString(text);
                 serialPort.writeString("\u001A");
                 line = assembler.readStringLine();
                 LOG.info("Reading line: " + line);
             } else if (!StringUtils.isEmpty(line) && !FINAL_RESULT_CODE.contains(line)) {
-                if (responseBuffer.length() > 0) responseBuffer.append('\n');
-                responseBuffer.append(line);
+                if (responseBuilder.length() > 0) responseBuilder.append('\n');
+                responseBuilder.append(line);
             }
         } while (!FINAL_RESULT_CODE.contains(line));
         command.setStatus(line);
-        return responseBuffer.toString();
+        return responseBuilder.toString();
     }
 
     public void close() throws SerialPortException {

@@ -18,6 +18,7 @@ The `application-{profile}.properties` (in our case `application-development.pro
     * `gammu` - using command line tool [Gammu](http://wammu.eu/gammu/)
 
 * `sms.at.port` - the serial port name (`/dev/ttyUSB0` or `COM1` or etc.) **required for AT sender only**
+* `sms.at.pin` - a GSM modem PIN code  **can by applied for AT sender only**
 * `sms.whiteList` - the white list of recipients which allowed to send a SMS message, leave it empty if not necessary
 * `sms.blackList` - the black list of recipients which not allowed to send a SMS message, leave it empty if not necessary
 * `logging.config`  - the logging configuration file
@@ -26,6 +27,7 @@ An AT example:
 ```
 sms.sender=at
 sms.at.port=/dev/ttyUSB0
+sms.at.pin=0000
 sms.whiteList=
 sms.blackList=
 logging.config=config/logback-development.xml

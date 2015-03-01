@@ -25,11 +25,13 @@ public class JSSCATSmsSender implements SmsSender {
 
     @PostConstruct
     public void init() throws Exception {
-        device = new ATDevice(environment.getProperty("sms.at.port"));
+        device = new ATDevice(environment.getProperty("sms.at.port") , environment.getProperty("sms.at.pin"));
         device.open();
-        selectTextFormat();
+
         logDeviceInformation();
+        selectTextFormat();
     }
+
 
     private void selectTextFormat() throws SerialPortException {
         device.execute(new ATCommand("AT+CMGF=1"));
