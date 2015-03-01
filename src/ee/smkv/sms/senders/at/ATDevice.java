@@ -43,8 +43,8 @@ public class ATDevice {
         do {
             line = assembler.readStringLine();
             LOG.info("Reading line: " + line);
-            if(CMEError.isCMEError(line)){
-                CMEError error = CMEError.parse(line);
+            if(DeviceError.isDeviceError(line)){
+                DeviceError error = DeviceError.parse(line);
                 if(error.isPinRequired()){
                     ATCommand enterPinCommand = new ATCommand("AT+CPIN=" + pin);
                     execute(enterPinCommand);
