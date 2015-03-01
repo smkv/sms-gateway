@@ -3,8 +3,6 @@ package ee.smkv.sms.senders;
 import ee.smkv.sms.model.SmsMessage;
 import ee.smkv.sms.senders.at.ATCommand;
 import ee.smkv.sms.senders.at.ATDevice;
-import ee.smkv.sms.senders.at.MessageRecipientATCommand;
-import ee.smkv.sms.senders.at.MessageTextATCommand;
 import jssc.SerialPortException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,25 +27,18 @@ public class JSSCATSmsSender implements SmsSender {
     public void init() throws Exception {
         device = new ATDevice(environment.getProperty("sms.at.port"));
         device.open();
-        checkATSupport();
         selectTextFormat();
     }
 
     private void selectTextFormat() {
         try {
-            device.execute(ATCommand.create("AT+CMGF=1"));// set TEXT format
+            device.execute(new ATCommand("AT+CMGF=1"));
         } catch (Exception e) {
             LOG.error(e.getMessage() ,e);
         }
     }
 
-    private void checkATSupport() {
-        try {
-            device.execute(ATCommand.create("AT")); // check AT support
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-        }
-    }
+
 
     @PreDestroy
     public void destroy() throws Exception {
@@ -58,9 +49,7 @@ public class JSSCATSmsSender implements SmsSender {
     @Override
     public void send(SmsMessage smsMessage) {
         try {
-            device.execute(MessageRecipientATCommand.create(smsMessage));
-            device.execute(MessageTextATCommand.create(smsMessage));
-
+            device.execute(new ATCommand(String.format("AT+CMGS=\"%s\"", smsMessage.getRecipient()) , smsMessage.getText()));
         } catch (SerialPortException e) {
             LOG.error(e.getMessage(), e);
         }

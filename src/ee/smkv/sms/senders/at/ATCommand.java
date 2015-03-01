@@ -2,25 +2,42 @@ package ee.smkv.sms.senders.at;
 
 public class ATCommand {
     protected String command;
+    protected String text;
+    protected String status = "";
 
-    ATCommand(String command) {
+
+    public ATCommand(String command) {
         this.command = command;
     }
 
-    public static ATCommand create(String command){
-        return new ATCommand(command);
+    public ATCommand(String command, String text) {
+        this.command = command;
+        this.text = text;
     }
 
-    protected void handleResponse(String response) {
-        boolean valid = response.endsWith("\r\nOK\r\n");
-        if(!valid){
-            throw new RuntimeException(String.format("Execution of command '%s' failed: %s", command , response ));
-        }
+    public String getCommand() {
+        return command;
     }
-    
-    protected byte[] getBytes(){
-        return (command + '\r').getBytes();
-        
+
+    public String prompt(String response) {
+        return text;
     }
-    
+
+
+    public String getStatus() {
+        return status;
+    }
+
+    void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "ATCommand{" +
+                "status='" + status + '\'' +
+                "command='" + command + '\'' +
+                ", text='" + text + '\'' +
+                '}';
+    }
 }
