@@ -28,16 +28,17 @@ public class JSSCATSmsSender implements SmsSender {
         device = new ATDevice(environment.getProperty("sms.at.port"));
         device.open();
         selectTextFormat();
+        logDeviceInformation();
     }
 
-    private void selectTextFormat() {
-        try {
-            device.execute(new ATCommand("AT+CMGF=1"));
-        } catch (Exception e) {
-            LOG.error(e.getMessage() ,e);
-        }
+    private void selectTextFormat() throws SerialPortException {
+        device.execute(new ATCommand("AT+CMGF=1"));
+
     }
 
+    private void logDeviceInformation() throws SerialPortException {
+        LOG.info("Device Information: \n" + device.execute(new ATCommand("ATI")));
+    }
 
 
     @PreDestroy
@@ -49,7 +50,7 @@ public class JSSCATSmsSender implements SmsSender {
     @Override
     public void send(SmsMessage smsMessage) {
         try {
-            device.execute(new ATCommand(String.format("AT+CMGS=\"%s\"", smsMessage.getRecipient()) , smsMessage.getText()));
+            device.execute(new ATCommand(String.format("AT+CMGS=\"%s\"", smsMessage.getRecipient()), smsMessage.getText()));
         } catch (SerialPortException e) {
             LOG.error(e.getMessage(), e);
         }
