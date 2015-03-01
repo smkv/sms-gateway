@@ -1,8 +1,46 @@
 #SMS gateway
 
-A simple Java application for sending SMS messages using the gammu command line tool via a REST service.
+A simple Java application for sending SMS messages using AT commands via a REST service.
 
 
+## Configuration
+There are two file types with configuration (`application.properties` and `application-{profile}.properties`).
+The application.properties file contains the spring.profiles.active property which defines the profile.
+
+```
+spring.profiles.active=development
+```
+
+The `application-{profile}.properties` (in our case `application-development.properties`) may contains following properties:
+
+* `sms.sender` - the sender implementation, there are available two types (`at` and `gammu`)
+    * `at` - the pure AT commands (required property `sms.at.port`)
+    * `gammu` - using command line tool [Gammu](http://wammu.eu/gammu/)
+
+* `sms.at.port` - the serial port name (`/dev/ttyUSB0` or `COM1` or etc.) **required for AT sender only**
+* `sms.whiteList` - the white list of recipients which allowed to send a SMS message, leave it empty if not necessary
+* `sms.blackList` - the black list of recipients which not allowed to send a SMS message, leave it empty if not necessary
+* `logging.config`  - the logging configuration file
+
+An AT example:
+```
+sms.sender=at
+sms.at.port=/dev/ttyUSB0
+sms.whiteList=
+sms.blackList=
+logging.config=config/logback-development.xml
+```
+
+A Gammu example:
+```
+sms.sender=gammu
+sms.whiteList=
+sms.blackList=
+logging.config=config/logback-development.xml
+```
+
+
+## TCP dump of REST service using
 
 An example of TCP stream for sending SMS message:
 ```tcp
