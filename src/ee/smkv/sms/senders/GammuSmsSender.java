@@ -68,4 +68,9 @@ public class GammuSmsSender implements SmsSender {
                         .build()
         );
     }
+
+    @Override
+    public String toString() {
+        return "GammuSmsSender{}";
+    }
 }

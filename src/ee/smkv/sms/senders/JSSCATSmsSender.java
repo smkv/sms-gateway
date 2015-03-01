@@ -23,14 +23,18 @@ public class JSSCATSmsSender implements SmsSender {
     Environment environment;
 
     ATDevice device;
+    private String deviceInformation;
 
     @PostConstruct
     public void init() throws Exception {
+        LOG.info("Initializing AT device ...");
         device = new ATDevice(environment.getProperty("sms.at.port") , environment.getProperty("sms.at.pin"));
         device.open();
 
-        logDeviceInformation();
+        deviceInformation = getDeviceInformation();
+        LOG.info("Device Information: \n" + deviceInformation);
         selectTextFormat();
+        LOG.info("AT device initialized ");
     }
 
 
@@ -39,8 +43,8 @@ public class JSSCATSmsSender implements SmsSender {
 
     }
 
-    private void logDeviceInformation() throws SerialPortException {
-        LOG.info("Device Information: \n" + device.execute(new ATCommand("ATI")));
+    private String getDeviceInformation() throws SerialPortException {
+       return device.execute(new ATCommand("ATI"));
     }
 
 
@@ -53,6 +57,7 @@ public class JSSCATSmsSender implements SmsSender {
     @Override
     public void send(SmsMessage smsMessage) {
         try {
+            LOG.info("Sending SMS message: " + smsMessage);
             device.execute(new ATCommand(String.format("AT+CMGS=\"%s\"", smsMessage.getRecipient()), smsMessage.getText()));
         } catch (SerialPortException e) {
             LOG.error(e.getMessage(), e);
@@ -60,4 +65,11 @@ public class JSSCATSmsSender implements SmsSender {
 
     }
 
+    @Override
+    public String toString() {
+        return "JSSCATSmsSender{" +
+                "device='" + device+ '\'' +
+                "deviceInformation='" + deviceInformation + '\'' +
+                '}';
+    }
 }

@@ -2,6 +2,7 @@ package ee.smkv.sms;
 
 
 import ee.smkv.sms.model.SmsMessage;
+import ee.smkv.sms.senders.SmsSender;
 import ee.smkv.sms.senders.SmsSenderFactory;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ public class SmsService {
     @PostConstruct
     void init() {
         LOG.info("Initialization of SMS Service...");
+        SmsSender sender = smsSenderFactory.getSmsSender();
+        LOG.info("SMS sender: " + sender);
         LOG.info("SMS White list: " + smsWhiteList);
         LOG.info("SMS Black list: " + smsBlackList);
         executorService.execute(new Runnable() {

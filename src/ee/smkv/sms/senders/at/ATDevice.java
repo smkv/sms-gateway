@@ -77,4 +77,10 @@ public class ATDevice {
     }
 
 
+    @Override
+    public String toString() {
+        return "ATDevice{" +
+                "serialPort=" + serialPort.getPortName() +
+                '}';
+    }
 }
