@@ -67,6 +67,29 @@ public class CMEError extends RuntimeException {
             put("+CME ERROR: 261", "SS not executed");
             put("+CME ERROR: 262", "SIM Blocked");
             put("+CME ERROR: 263", "Invalid block");
+            put("+CME ERROR: 300", "ME failure");
+            put("+CME ERROR: 301", "SMS service of ME reserved");
+            put("+CME ERROR: 302", "Operation not allowed");
+            put("+CME ERROR: 303", "Operation not supported");
+            put("+CME ERROR: 304", "Invalid PDU mode parameter");
+            put("+CME ERROR: 305", "Invalid text mode parameter");
+            put("+CME ERROR: 310", "SIM not inserted");
+            put("+CME ERROR: 311", "SIM PIN required");
+            put("+CME ERROR: 312", "PH-SIM PIN required");
+            put("+CME ERROR: 313", "SIM failure");
+            put("+CME ERROR: 314", "SIM busy");
+            put("+CME ERROR: 315", "SIM wrong");
+            put("+CME ERROR: 316", "SIM PUK required");
+            put("+CME ERROR: 317", "SIM PIN2 required");
+            put("+CME ERROR: 318", "SIM PUK2 required ");
+            put("+CME ERROR: 320", "Memory failure");
+            put("+CME ERROR: 321", "Invalid memory index");
+            put("+CME ERROR: 322", "Memory full");
+            put("+CME ERROR: 330", "SMSC address unknown ");
+            put("+CME ERROR: 331", "No network service");
+            put("+CME ERROR: 332", "Network timeout");
+            put("+CME ERROR: 340", "No +CNMA acknowledgement expected");
+            put("+CME ERROR: 500", "Unknown error");
             put("+CME ERROR: 772", "SIM powered down");
 
         }
