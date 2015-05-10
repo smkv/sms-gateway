@@ -1,7 +1,6 @@
 package ee.smkv.sms.senders;
 
 import ee.smkv.sms.model.SmsMessage;
-import ee.smkv.sms.utils.Maps;
 import org.apache.commons.exec.*;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -15,9 +14,6 @@ import java.io.IOException;
 public class GammuSmsSender implements SmsSender {
 
     private final static Logger LOG = Logger.getLogger(GammuSmsSender.class);
-    public static final String GAMMU_COMMAND_TEMPLATE = "gammu sendsms TEXT ${phone_number} -text ${message_text}";
-    public static final String PHONE_NUMBER = "phone_number";
-    public static final String MESSAGE_TEXT = "message_text";
     private final PumpStreamHandler executeOutputLogger = new PumpStreamHandler(new LogOutputStream(Level.INFO_INT) {
         @Override
         protected void processLine(String line, int logLevel) {
@@ -61,12 +57,14 @@ public class GammuSmsSender implements SmsSender {
     }
 
     protected CommandLine makeCommand(SmsMessage smsMessage) {
-        return CommandLine.parse(GAMMU_COMMAND_TEMPLATE,
-                Maps.<String, String>builder()
-                        .put(PHONE_NUMBER, smsMessage.getRecipient())
-                        .put(MESSAGE_TEXT, smsMessage.getText())
-                        .build()
-        );
+
+        CommandLine commandLine = new CommandLine("gammu");
+        commandLine.addArgument("sendsms") ;
+        commandLine.addArgument("TEXT") ;
+        commandLine.addArgument(smsMessage.getRecipient()) ;
+        commandLine.addArgument("-text") ;
+        commandLine.addArgument(smsMessage.getText());
+        return commandLine;
     }
 
     @Override
